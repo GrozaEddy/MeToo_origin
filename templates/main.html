@@ -136,16 +136,24 @@
 <header>
 
  <div class="topnav">
-   <a class="picture" href="home">
+   <a class="picture" href="">
     <img src="static/img/MeToo.png" width="100" height="53">
    </a>
-   <a class="active" href="home">Главная</a>
-   <a href="news">Меню</a>
+   <a class="active" href="">Главная</a>
+   <a href="menu">Меню</a>
    <a href="about">О нас</a>
-   <div class="topnav-right">
-     <a href="login">Войти</a>
-     <a href="register">Регистрация</a>
-   </div>
+     {% if current_user.is_authenticated %}
+        <div class="topnav-right">
+            <a href="/profile">Мой профиль</a>
+            <a href="/logout">Выйти</a>
+        </div>
+     {% else %}
+            <div class="topnav-right">
+                <a href="login">Войти</a>
+                <a href="register">Регистрация</a>
+            </div>
+     {% endif %}
+
  </div>
    <div id="carousel-example-2" class="carousel slide carousel-fade"
      data-ride="carousel">

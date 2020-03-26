@@ -20,17 +20,17 @@ def load_user(user_id):
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
+    email = StringField('&#9993; Почта', validators=[DataRequired()])
+    password = PasswordField('&#128274; Пароль', validators=[DataRequired()])
+    password_again = PasswordField('&#128274; Повторите пароль', validators=[DataRequired()])
     name = StringField('Имя пользователя', validators=[DataRequired()])
-    about = TextAreaField("Немного о себе")
+    city = TextAreaField("Ваш город ")
     submit = SubmitField('Войти')
 
 
 class LoginForm(FlaskForm):
-    email = StringField("Почта", validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField("&#9993; Почта", validators=[DataRequired()])
+    password = PasswordField('&#128274; Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
