@@ -146,13 +146,14 @@ def session_test():
 
 
 @app.route("/")
+@app.route("/index")
 def index():
     sessions = db_session.create_session()
     new = sessions.query(news.News).filter(news.News.is_private != True)
     params = {}
     params['title'] = 'MeToo'
     params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
-    return render_template("main.html", **params)
+    return render_template("karysel.html", **params)
 
 
 @app.route('/register', methods=['GET', 'POST'])
