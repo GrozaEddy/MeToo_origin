@@ -149,7 +149,10 @@ def session_test():
 def index():
     sessions = db_session.create_session()
     new = sessions.query(news.News).filter(news.News.is_private != True)
-    return render_template("main.html", news=new)
+    params = {}
+    params['title'] = 'MeToo'
+    params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
+    return render_template("main.html", **params)
 
 
 @app.route('/register', methods=['GET', 'POST'])
