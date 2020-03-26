@@ -27,6 +27,34 @@
             text-decoration: none;
         }
 
+        .navbar_bottom {
+              overflow: hidden;
+              background-color: #333;
+              position: fixed;
+              bottom: 0;
+              width: 100%;
+            }
+
+        .navbar_bottom a {
+              float: left;
+              display: block;
+              color: #f2f2f2;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+              font-size: 17px;
+        }
+
+        .navbar_bottom a:hover {
+              background: #f1f1f1;
+              color: black;
+        }
+
+        .navbar_bottom a.active {
+              background-color: #4CAF50;
+              color: white;
+        }
+
         .dropdown {
             float: left;
             overflow: hidden;
@@ -153,7 +181,14 @@
                 <a href="register">Регистрация</a>
             </div>
      {% endif %}
-
+ </div>
+ <div class="navbar_bottom">
+  <a class="picture" href="index">
+    <img src="static/img/MeToo.png" width="100" height="53">
+   </a>
+   <a class="active" href="index">Главная</a>
+   <a href="menu">Меню</a>
+   <a href="about">О нас</a>
  </div>
    <script
            src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
