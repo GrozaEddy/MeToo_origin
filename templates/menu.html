@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block content %}
+{% for item in pizza_menu['pizza'] %}
+    <div class="row">
+        <div class="column">
+            <div class="content" height="500">
+                <img src="{{item['picture_place']}}" alt="{{item['name']}}" style="width:100%">
+                <h3>{{item['name']}}</h3>
+                <p> {{item['sostav']}}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
