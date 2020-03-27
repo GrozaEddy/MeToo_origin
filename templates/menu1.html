@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+
+{% block content %}
+{% for item in pizza_menu['pizza'] %}
+    <h1>{{item['name']}}</h1>
+    <h1>{{item['sostav']}}</h1>
+    <h1>{{item['picture_place']}}</h1>
+    <button class="accordion">{{item['name']}}</button>
+    <div class="panel">
+        <img src="{{item['picture_place']}}" alt="{{item['name']}}">
+        <p>{{item['sostav']}}</p>
+    </div>
+{% endfor %}
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+    }
+    </script>
+{% endblock %}
