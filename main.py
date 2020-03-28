@@ -5,6 +5,7 @@ from wtforms import StringField, PasswordField, SubmitField, TextAreaField, Bool
 from wtforms.validators import DataRequired
 from data import db_session, news, users
 import news_api
+import json, pprint
 import datetime as dt
 
 app = Flask(__name__)
@@ -158,41 +159,11 @@ def index():
 
 @app.route('/menu')
 def meun():
-    params = {}
-    params['pizza_menu'] = {'pizza': [
-        {
-            'name': 'Четыре сыра',
-            'sostav': 'Сыр блю чиз, моцарелла, смесь сыров чеддер и пармезан, сливочный соус',
-            'picture_place': 'static/img/pizza/4sira.jpg'},
-        {
-            'name': 'Дары моря',
-            'sostav': 'креветки, мидии, осьминоги, лук репчатый, перец сладкий, помидоры, '
-                      'масло сливочное, оливки без косточек, сыр твердый тертый.',
-            'picture_place': 'static/img/pizza/DariMorya.jpg'
-        },
-        {
-            'name': 'Моцарелла',
-            'sostav': 'соус томатный, сыр Моцарелла, помидоры, базилик зелёный, масло оливковое',
-            'picture_place': 'static/img/pizza/motstsarello.jpg'
-        },
-        {
-            'name': 'Охотничья',
-            'sostav': 'Колбаски (охотничьи), Грудинка, Огурец (маринованный), '
-                      'Лук репчатый, Майонез, Кетчуп (или томатная паста), Сыр твердый',
-            'picture_place': 'static/img/pizza/okhotnichiya.jpg'
-        },
-        {
-            'name': 'Пепперони',
-            'sostav': 'Пикантная пепперони, томатный соус, моцарелла',
-            'picture_place': 'static/img/pizza/pepperon.jpg'
-        },
-        {
-            'name': 'Маргарита',
-            'sostav': 'Итальянские травы, томатный соус, моцарелла, томаты',
-            'picture_place': 'static/img/pizza/margarita.jpg'
-        }
-    ]}
-    return render_template("menu.html", pizza_menu=params['pizza_menu'])
+    with open("menu.json", "rt", encoding="utf8") as f:
+        menu = json.loads(f.read())
+        pprint.pprint(menu)
+        print(list(menu.keys()))
+    return render_template('menu.html', spisok_poz=list(menu.keys()), pizza_menu=menu)
 
 
 @app.route('/register', methods=['GET', 'POST'])
