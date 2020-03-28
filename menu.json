@@ -29,4 +29,37 @@
             "sostav": "Итальянские травы, томатный соус, моцарелла, томаты",
             "picture_place": "static/img/pizza/margarita.jpg"
         }
-    ]}
+    ], "Напитки": [
+        {
+            "name": "Буратино",
+            "sostav": "Оч. вкусный",
+            "picture_place": "static/img/drink/buratino.jpg"
+        },
+        {
+            "name": "DrPepper",
+            "sostav": "Вкуснее чем буратино",
+            "picture_place": "static/img/drink/DrPepper.jpg"
+        },
+        {
+            "name": "Fanta",
+            "sostav": "Не алкоголь",
+            "picture_place": "static/img/drink/fanta.jpg"
+        },
+        {
+            "name": "Кола",
+            "sostav": "Кола конечно же",
+            "picture_place": "static/img/drink/kola.jpg"
+        },
+        {
+            "name": "Pepsi",
+            "sostav": "Бетта версия колы",
+            "picture_place": "static/img/drink/pepsi.jpg"
+        },
+        {
+            "name": "Sprite",
+            "sostav": "Бетта версия Lipton",
+            "picture_place": "static/img/drink/sprite.jpg"
+        }
+    ]
+}
+
