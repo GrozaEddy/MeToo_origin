@@ -55,6 +55,27 @@ class MenuForm(FlaskForm):
     submit = SubmitField('Добавить')
 
 
+@app.route("/yours-order", methods=['GET', 'POST'])
+def yours_order():
+    form = MenuForm()
+    if form.validate_on_submit():
+        sessions = db_session.create_session()
+        if sessions.query(menu.Menu).filter(menu.Menu.title == form.title.data).first():
+            return render_template('newfood.html', title='Добавление блюда',
+                                   form=form,
+                                   message="Такое блюдо уже есть")
+        menus = menu.Menu(
+            group=form.group.data,
+            title=form.title.data,
+            content=form.content.data,
+            price=form.price.data
+        )
+        sessions.add(menus)
+        sessions.commit()
+        return redirect('/menu')
+    return render_template('newfood.html', title='Добавление блюда', form=form)
+
+
 @app.route('/logout')
 def logout():
     logout_user()
