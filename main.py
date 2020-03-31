@@ -43,6 +43,18 @@ class NewsForm(FlaskForm):
     submit = SubmitField('Применить')
 
 
+class AddInOrder(FlaskForm):
+    submit = SubmitField('Добавить')
+
+
+class MenuForm(FlaskForm):
+    group = StringField("Вид блюда", validators=[DataRequired()])
+    title = StringField("Название блюда", validators=[DataRequired()])
+    content = StringField("Состав блюда", validators=[DataRequired()])
+    price = StringField("Цена блюда", validators=[DataRequired()])
+    submit = SubmitField('Добавить')
+
+
 @app.route('/logout')
 def logout():
     logout_user()
@@ -157,13 +169,14 @@ def index():
     return render_template("karysel.html", **params)
 
 
-@app.route('/menu')
-def meun():
+@app.route('/menu', methods=['POST', 'GET'])
+def menu():
+    form = AddInOrder()
     with open("menu.json", "rt", encoding="utf8") as f:
         menu = json.loads(f.read())
-        pprint.pprint(menu)
-        print(list(menu.keys()))
-    return render_template('menu.html', spisok_poz=list(menu.keys()), pizza_menu=menu)
+    if form.validate_on_submit():
+        return redirect('/login')
+    return render_template('menu.html', spisok_poz=list(menu.keys()), pizza_menu=menu, form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -193,6 +206,7 @@ def reqister():
 
 def main():
     db_session.global_init("db/blogs.sqlite")
+    db_session.global_init('db/menu.sqlite')
     app.register_blueprint(news_api.blueprint)
     app.run()
 
