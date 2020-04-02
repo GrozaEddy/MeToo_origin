@@ -13,3 +13,7 @@ class Menu(SqlAlchemyBase, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     price = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
+
+    def __repr__(self):
+        return f'{self.id}, {self.group}, {self.title}, {self.content}, {self.price}'

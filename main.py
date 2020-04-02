@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
-from data import db_session, news, users
+from data import db_session, news, users, menu
 import news_api
 import json, pprint
 import datetime as dt
@@ -191,7 +191,7 @@ def index():
 
 
 @app.route('/menu', methods=['POST', 'GET'])
-def menu():
+def menu_func():
     form = AddInOrder()
     with open("menu.json", "rt", encoding="utf8") as f:
         menu = json.loads(f.read())
@@ -215,8 +215,9 @@ def reqister():
                                    message="Такой пользователь уже есть")
         user = users.User(
             name=form.name.data,
+            password=form.password.data,
             email=form.email.data,
-            about=form.about.data
+            city=form.city.data
         )
         user.set_password(form.password.data)
         sessions.add(user)
@@ -226,9 +227,8 @@ def reqister():
 
 
 def main():
-    db_session.global_init("db/blogs.sqlite")
+
     db_session.global_init('db/menu.sqlite')
-    app.register_blueprint(news_api.blueprint)
     app.run()
 
 
