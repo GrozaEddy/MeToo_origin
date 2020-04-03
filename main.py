@@ -4,14 +4,18 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
 from data import db_session, news, users, menu
+from werkzeug.utils import secure_filename
 import news_api
-import json, pprint
+import json, pprint, os
 import datetime as dt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+UPLOAD_FOLDER = 'static/img/'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @login_manager.user_loader
@@ -55,8 +59,19 @@ class MenuForm(FlaskForm):
     submit = SubmitField('Добавить')
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
 @app.route("/yours-order", methods=['GET', 'POST'])
 def yours_order():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('zagruz_and_carusel.html')
     form = MenuForm()
     if form.validate_on_submit():
         sessions = db_session.create_session()
@@ -70,6 +85,7 @@ def yours_order():
             content=form.content.data,
             price=form.price.data
         )
+        print(1)
         sessions.add(menus)
         sessions.commit()
         return redirect('/menu')
