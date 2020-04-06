@@ -42,15 +42,13 @@
         {% endfor %}
     </p>
     <p>
-        <form class="login_form" method="post" enctype="multipart/form-data">
-            <h1>Добавить картинку</h1>
-            <div class="form-group">
-                <label for="photo">Выберите файл</label>
-                    <input type="file" class="form-control-file" id="photo" name="file">
-            </div>
-        </form>
+        <h1>Добавить картинку</h1>
+        <div class="form-group">
+            <label for="photo">Выберите файл</label>
+            <input type="file" class="form-control-file" id="photo" name="file">
+            {{ form.submit(type="submit", class="btn btn-primary") }}
+        </div>
     </p>
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>
 {% endblock %}

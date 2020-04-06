@@ -56,6 +56,7 @@ class MenuForm(FlaskForm):
     title = StringField("Название блюда", validators=[DataRequired()])
     content = StringField("Состав блюда", validators=[DataRequired()])
     price = StringField("Цена блюда", validators=[DataRequired()])
+    picture = StringField('Фото', validators=[DataRequired])
     submit = SubmitField('Добавить')
 
 
@@ -66,12 +67,6 @@ def allowed_file(filename):
 
 @app.route("/yours-order", methods=['GET', 'POST'])
 def yours_order():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return render_template('zagruz_and_carusel.html')
     form = MenuForm()
     if form.validate_on_submit():
         sessions = db_session.create_session()
@@ -85,11 +80,19 @@ def yours_order():
             content=form.content.data,
             price=form.price.data
         )
-        print(1)
         sessions.add(menus)
         sessions.commit()
         return redirect('/menu')
     return render_template('newfood.html', title='Добавление блюда', form=form)
+
+
+def write_new_food():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('zagruz_and_carusel.html')
 
 
 @app.route('/logout')
@@ -203,7 +206,28 @@ def index():
     params = {}
     params['title'] = 'MeToo'
     params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
+    params['admin'] = 'no'
     return render_template("karysel.html", **params)
+
+
+@app.route("/admin",  methods=['GET', 'POST'])
+@app.route("/index-admin", methods=['GET', 'POST'])
+def index_for_admin():
+    sessions = db_session.create_session()
+    new = sessions.query(news.News).filter(news.News.is_private != True)
+    params = {}
+    params['title'] = 'MeToo'
+    params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
+    params['admin'] = 'yes'
+    if request.method == 'GET':
+        return render_template('karysel.html', **params)
+    elif request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            params['arr_picture'].append(filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template("karysel.html", **params)
 
 
 @app.route('/menu', methods=['POST', 'GET'])
