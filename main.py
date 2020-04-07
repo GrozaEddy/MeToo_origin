@@ -56,7 +56,6 @@ class MenuForm(FlaskForm):
     title = StringField("Название блюда", validators=[DataRequired()])
     content = StringField("Состав блюда", validators=[DataRequired()])
     price = StringField("Цена блюда", validators=[DataRequired()])
-    picture = StringField('Фото', validators=[DataRequired])
     submit = SubmitField('Добавить')
 
 
@@ -70,29 +69,42 @@ def yours_order():
     form = MenuForm()
     if form.validate_on_submit():
         sessions = db_session.create_session()
+        print(form.group.data, form.title.data, form.content.data, form.price.data)
         if sessions.query(menu.Menu).filter(menu.Menu.title == form.title.data).first():
             return render_template('newfood.html', title='Добавление блюда',
                                    form=form,
                                    message="Такое блюдо уже есть")
+
         menus = menu.Menu(
             group=form.group.data,
             title=form.title.data,
             content=form.content.data,
-            price=form.price.data
+            price=form.price.data,
+            picture='static/img/nophoto.png'
         )
         sessions.add(menus)
         sessions.commit()
-        return redirect('/menu')
+        return redirect('/add-picture-on-food')
     return render_template('newfood.html', title='Добавление блюда', form=form)
 
 
+@app.route("/add-picture-on-food", methods=['GET', 'POST'])
 def write_new_food():
+    if request.method == 'GET':
+        return render_template('add_picture.html')
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
+            session = db_session.create_session()
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return render_template('zagruz_and_carusel.html')
+            try:
+                menu.picture = UPLOAD_FOLDER + filename
+                session.merge(menu)
+                session.commit()
+            except Exception:
+                pass
+            return redirect('/menu')
 
 
 @app.route('/logout')
@@ -210,7 +222,7 @@ def index():
     return render_template("karysel.html", **params)
 
 
-@app.route("/admin",  methods=['GET', 'POST'])
+@app.route("/admin", methods=['GET', 'POST'])
 @app.route("/index-admin", methods=['GET', 'POST'])
 def index_for_admin():
     sessions = db_session.create_session()
@@ -267,7 +279,6 @@ def reqister():
 
 
 def main():
-
     db_session.global_init('db/menu.sqlite')
     app.run()
 

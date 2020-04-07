@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Добавление блюда</h1>
-<p action="" method="post">
+<form action="" method="post">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <p>
@@ -41,14 +41,7 @@
             </p>
         {% endfor %}
     </p>
-    <p>
-        <h1>Добавить картинку</h1>
-        <div class="form-group">
-            <label for="photo">Выберите файл</label>
-            <input type="file" class="form-control-file" id="photo" name="file">
-            {{ form.submit(type="submit", class="btn btn-primary") }}
-        </div>
-    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>
 {% endblock %}
