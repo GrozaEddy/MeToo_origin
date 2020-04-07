@@ -69,27 +69,20 @@ def yours_order():
     form = MenuForm()
     if form.validate_on_submit():
         sessions = db_session.create_session()
-        print(form.group.data, form.title.data, form.content.data, form.price.data)
         if sessions.query(menu.Menu).filter(menu.Menu.title == form.title.data).first():
             return render_template('newfood.html', title='Добавление блюда',
                                    form=form,
                                    message="Такое блюдо уже есть")
 
-        menus = menu.Menu(
-            group=form.group.data,
-            title=form.title.data,
-            content=form.content.data,
-            price=form.price.data,
-            picture='static/img/nophoto.png'
-        )
-        sessions.add(menus)
-        sessions.commit()
-        return redirect('/add-picture-on-food')
+        return redirect(f'/add-picture-on-food/{form.group.data}/{form.title.data}/'
+                        f'{form.content.data}/{form.price.data}')
     return render_template('newfood.html', title='Добавление блюда', form=form)
 
 
-@app.route("/add-picture-on-food", methods=['GET', 'POST'])
-def write_new_food():
+@app.route("/add-picture-on-food/<string:group>/<string:title>/<string:content>/<string:price>",
+           methods=['GET', 'POST'])
+def write_new_food(group, title, content, price):
+    print(group, title, content, price)
     if request.method == 'GET':
         return render_template('add_picture.html')
     if request.method == 'POST':
@@ -99,11 +92,18 @@ def write_new_food():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             try:
-                menu.picture = UPLOAD_FOLDER + filename
-                session.merge(menu)
+                file_name = '/'.join([UPLOAD_FOLDER, filename])
+                menus = menu.Menu(
+                    group=group,
+                    title=title,
+                    content=content,
+                    price=price,
+                    picture=file_name
+                )
+                session.add(menus)
                 session.commit()
             except Exception:
-                pass
+                print(menu.Menu.picture)
             return redirect('/menu')
 
 
