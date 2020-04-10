@@ -2,6 +2,8 @@
 
 {% block content %}
 <form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
     {% for names in spisok_poz %}
         <table>
             <tr><th colspan="6" align="center">{{names}}</th></tr>
@@ -14,9 +16,10 @@
                     </th>
                     <th>
                         <div style="padding: 0px 0px 0px 30px;"><h1>{{item['name']}}</h1></div>
-                        <div style="width: 60%; padding: 0px 0px 0px 30px;"> {{item['sostav']}}</div>
-                        <div class="button-add-in-order">
-                            {{ form.submit(type="submit", class="btn btn-primary") }}
+                        <div style="width: 60%; padding: 0px 0px 0px 30px;"> {{item['sostav']}} <br>
+                            <big style="colorL red;">{{item['price']}}</big></div>
+                        <div class="button-add-in-order" id="{{item['id']}}">
+                            {{ form.submit(type="submit", class="btn btn-primary", id="{{item['id']}}") }}
                         </div>
                     </th>
                 </tr>

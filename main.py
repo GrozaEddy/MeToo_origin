@@ -169,7 +169,7 @@ def profile():
     form = Korzina()
     if form.validate_on_submit():
         print(1)
-        return redirect('/') #здесь нужно прописать путь к козине, но не работает
+        return redirect('/')  # здесь нужно прописать путь к корзине, но не работает
     return render_template('profile.html', form=form)
 
 
@@ -227,11 +227,30 @@ def index_for_admin():
 @app.route('/menu', methods=['POST', 'GET'])
 def menu_func():
     form = AddInOrder()
-    with open("menu.json", "rt", encoding="utf8") as f:
-        menu = json.loads(f.read())
+    sessions = db_session.create_session()
+    menu_arr = {}
+    for x in sessions.query(menu.Menu).all():
+        if x.group.upper() not in menu_arr.keys():
+            menu_arr[x.group.upper()] = [{
+                'id': x.id,
+                'name': x.title,
+                'sostav': x.content,
+                'price': x.price,
+                'picture_place': x.picture
+            }
+            ]
+        else:
+            menu_arr[x.group.upper()].append({
+                'id': x.id,
+                'name': x.title,
+                'sostav': x.content,
+                'price': x.price,
+                'picture_place': x.picture
+            })
     if form.validate_on_submit():
-        return redirect('/login')
-    return render_template('menu.html', spisok_poz=list(menu.keys()), pizza_menu=menu, form=form)
+        print(1)
+    return render_template('menu.html', spisok_poz=list(menu_arr.keys()), pizza_menu=menu_arr,
+                           form=form)
 
 
 @app.route('/yours-order', methods=['POST', 'GET'])
