@@ -6,5 +6,18 @@
         <h2>Ваше имя: {{ current_user.name }}</h2>
         <h2>Ваша почта: {{ current_user.email }}</h2>
         <h2>Город проживания: {{ current_user.city }}</h2>
+        {% if current_user.id == 1 %}
+            <h1>-------------</h1>
+            <h1>-------------</h1>
+            <h2>Вы администартор</h2>
+            <h3>Это дает вам возможность:</h3>
+            <h3> - Вы можете добавлять еду.</h3>
+            <h3> - Вы можете редактировать меню.</h3>
+            <h3> - Вам не доступна функция покупки.</h3>
+        {% else %}
+            <form action="" method="post">
+                <p> {{ form.submit(type="submit", class="btn btn-primary") }} </p>
+            </form>
+        {% endif %}
     </div>
 {% endblock %}

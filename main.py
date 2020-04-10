@@ -51,6 +51,10 @@ class AddInOrder(FlaskForm):
     submit = SubmitField('Добавить')
 
 
+class Korzina(FlaskForm):
+    submit = SubmitField('Корзина')
+
+
 class MenuForm(FlaskForm):
     group = StringField("Вид блюда", validators=[DataRequired()])
     title = StringField("Название блюда", validators=[DataRequired()])
@@ -162,7 +166,11 @@ def login():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html')
+    form = Korzina()
+    if form.validate_on_submit():
+        print(1)
+        return redirect('/') #здесь нужно прописать путь к козине, но не работает
+    return render_template('profile.html', form=form)
 
 
 @app.route("/cookie_test")
@@ -224,6 +232,11 @@ def menu_func():
     if form.validate_on_submit():
         return redirect('/login')
     return render_template('menu.html', spisok_poz=list(menu.keys()), pizza_menu=menu, form=form)
+
+
+@app.route('/yours-order', methods=['POST', 'GET'])
+def yours_order():
+    return render_template('korzina.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
