@@ -64,8 +64,8 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route("/yours-order", methods=['GET', 'POST'])
-def yours_order():
+@app.route("/addfood", methods=['GET', 'POST'])
+def add_food():
     form = MenuForm()
     if form.validate_on_submit():
         sessions = db_session.create_session()
@@ -118,37 +118,6 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/news', methods=['GET', 'POST'])
-@login_required
-def add_news():
-    form = NewsForm()
-    if form.validate_on_submit():
-        sessions = db_session.create_session()
-        new = news.News()
-        new.title = form.title.data
-        new.content = form.content.data
-        new.is_private = form.is_private.data
-        current_user.news.append(new)
-        sessions.merge(current_user)
-        sessions.commit()
-        return redirect('/')
-    return render_template('news.html', title='Добавление новости', form=form)
-
-
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def news_delete(id):
-    sessions = db_session.create_session()
-    new = sessions.query(news.News).filter(news.News.id == id,
-                                           news.News.user == current_user).first()
-    if new:
-        sessions.delete(new)
-        sessions.commit()
-    else:
-        abort(404)
-    return redirect('/')
-
-
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_news(id):
@@ -189,6 +158,11 @@ def login():
             return redirect('/')
         return render_template('login.html', message='Неправильный логин или пароль', form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    return render_template('profile.html')
 
 
 @app.route("/cookie_test")

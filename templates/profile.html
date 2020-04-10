@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <div align="center">
+        <h1>Ваш профиль</h1>
+        <h2>Ваше имя: {{ current_user.name }}</h2>
+        <h2>Ваша почта: {{ current_user.email }}</h2>
+        <h2>Город проживания: {{ current_user.city }}</h2>
+    </div>
+{% endblock %}

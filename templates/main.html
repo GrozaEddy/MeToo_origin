@@ -163,12 +163,17 @@
         <a href="about">О нас</a>
         {% if current_user.is_authenticated %}
         <div class="topnav-right">
-            <a href="/profile">Мой профиль</a>
-            <a href="/logout">Выйти</a>
+            {% if current_user.id == 1 %}
+                <a href="addfood">Добавить</a>
+                <a href="/profile">Мой профиль</a>
+                <a href="/logout">Выйти</a>
+            {% else %}
+                <a href="/profile">Мой профиль</a>
+                <a href="/logout">Выйти</a>
+            {% endif %}
         </div>
         {% else %}
         <div class="topnav-right">
-            <a href="yours-order">Корзина</a>
             <a href="login">Войти</a>
             <a href="register">Регистрация</a>
         </div>
