@@ -16,6 +16,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    order = sqlalchemy.Column(sqlalchemy.String, nullable=True, default="")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -24,4 +25,4 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         return check_password_hash(self.hashed_password, password)
 
     def __repr__(self):
-        return f'{self.id}, {self.name}, {self.about}, {self.email}'
+        return f'{self.id}, {self.name}, {self.about}, {self.email}, {self.order}'

@@ -19,7 +19,7 @@
                         <div style="width: 60%; padding: 0px 0px 0px 30px;"> {{item['sostav']}} <br>
                             <big style="colorL red;">{{item['price']}}</big></div>
                         <div class="button-add-in-order" id="{{item['id']}}">
-                            {{ form.submit(type="submit", class="btn btn-primary", id="{{item['id']}}") }}
+                            <a href="/menubuy/{{ item.id }}" class="btn btn-warning">Добавить</a>
                         </div>
                     </th>
                 </tr>

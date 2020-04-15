@@ -224,6 +224,20 @@ def index_for_admin():
             return render_template("karysel.html", **params)
 
 
+@app.route('/menubuy/<string:idd>')
+def menu_buy(idd):
+    print(idd)
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    if user.order is None:
+        user.order = ''
+    user.order = str(user.order) + ' ' + idd
+
+    sessions.commit()
+
+    return redirect('/menu')
+
+
 @app.route('/menu', methods=['POST', 'GET'])
 def menu_func():
     form = AddInOrder()
