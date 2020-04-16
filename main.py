@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
-from data import db_session, news, users, menu
+from data import db_session, news, users, menu, history
 from werkzeug.utils import secure_filename
 import news_api
 import json, pprint, os
@@ -49,6 +49,12 @@ class NewsForm(FlaskForm):
 
 class AddInOrder(FlaskForm):
     submit = SubmitField('Добавить')
+
+
+class AddInHistory(FlaskForm):
+    city = StringField('В какой город доставить?', validators=[DataRequired()])
+    full_name_street = StringField('Полный адрес(не забудьте указать номер дома и квартиры)',
+                       validators=[DataRequired()])
 
 
 class Korzina(FlaskForm):
@@ -208,7 +214,6 @@ def index():
 @app.route("/index-admin", methods=['GET', 'POST'])
 def index_for_admin():
     sessions = db_session.create_session()
-    new = sessions.query(news.News).filter(news.News.is_private != True)
     params = {}
     params['title'] = 'MeToo'
     params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
@@ -226,15 +231,13 @@ def index_for_admin():
 
 @app.route('/menubuy/<string:idd>')
 def menu_buy(idd):
-    print(idd)
     sessions = db_session.create_session()
     user = sessions.query(users.User).get(current_user.id)
     if user.order is None:
         user.order = ''
-    user.order = str(user.order) + ' ' + idd
-
+    if idd not in str(user.order).split():
+        user.order = str(user.order) + ' ' + idd
     sessions.commit()
-
     return redirect('/menu')
 
 
@@ -261,15 +264,101 @@ def menu_func():
                 'price': x.price,
                 'picture_place': x.picture
             })
-    if form.validate_on_submit():
-        print(1)
     return render_template('menu.html', spisok_poz=list(menu_arr.keys()), pizza_menu=menu_arr,
                            form=form)
 
 
+@app.route('/plus/<string:idd>')
+def plus_in_order(idd):
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    user.order = str(user.order) + ' ' + idd.strip()
+    sessions.commit()
+    return redirect('/yours-order')
+
+
+@app.route('/minus/<string:idd>')
+def minus_in_order(idd):
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    arr = user.order.split()
+    if idd.strip() in arr and arr.count(idd) > 1:
+        arr.remove(idd.strip())
+    arr.sort()
+    user.order = ' '.join(arr)
+    sessions.commit()
+    return redirect('/yours-order')
+
+
+@app.route('/delete/<string:idd>')
+def delete(idd):
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    arr = str(user.order).split()
+    if len(arr) != 0:
+        new_arr_order = []
+        for x in sorted(arr):
+            if x != idd:
+                new_arr_order.append(x)
+        user.order = ' '.join(new_arr_order)
+        sessions.commit()
+        return redirect('/yours-order')
+    return redirect('/menu')
+
+
+@app.route('/add-order')
+def add_order():
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    price = 0
+    arr = user.order.split()
+    for x in sorted(arr):
+        for y in sessions.query(menu.Menu).filter(menu.Menu.id == x):
+            price += (arr.count(x) * int(y.price))
+    add_in_history = history.History(
+        user_id=user.id,
+        address='address',
+        about_order=user.order,
+        all_price=price
+    )
+    user.order = ''
+    sessions.add(add_in_history)
+    sessions.commit()
+    return redirect('/')
+
+
 @app.route('/yours-order', methods=['POST', 'GET'])
 def yours_order():
-    return render_template('korzina.html')
+    sessions = db_session.create_session()
+    user = sessions.query(users.User).get(current_user.id)
+    arr = str(user.order).split()
+    menu_arr = {}
+    arr_id = []
+    for y in sorted(arr):
+        for x in sessions.query(menu.Menu).filter(menu.Menu.id == y):
+            if x.id not in arr_id:
+                if x.group.upper() not in menu_arr.keys():
+                    menu_arr[x.group.upper()] = [{
+                        'id': x.id,
+                        'name': x.title,
+                        'sostav': x.content,
+                        'price': x.price,
+                        'picture_place': x.picture,
+                        'count': arr.count(y)
+                    }
+                    ]
+                else:
+                    menu_arr[x.group.upper()].append({
+                        'id': x.id,
+                        'name': x.title,
+                        'sostav': x.content,
+                        'price': x.price,
+                        'picture_place': x.picture,
+                        'count': arr.count(y)
+                    })
+            arr_id.append(x.id)
+    return render_template('korzina.html', spisok_poz=list(menu_arr.keys()), pizza_menu=menu_arr,
+                           user_id=user.id, count=len(menu_arr.keys()))
 
 
 @app.route('/register', methods=['GET', 'POST'])

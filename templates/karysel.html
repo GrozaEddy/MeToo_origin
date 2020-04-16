@@ -58,14 +58,16 @@
     <script
             src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js">
     </script>
-    {% if admin == 'yes' %}
-        <form class="login_form" method="post" enctype="multipart/form-data">
-            <h1>Добавить картинку</h1>
-            <div class="form-group">
-                <label for="photo">Выберите файл</label>
-                <input type="file" class="form-control-file" id="photo" name="file">
-            </div>
-            <button type="submit" class="btn btn-primary">Отправить</button>
-        </form>
+    {% if current_user.is_authenticated %}
+        {% if current_user.id == 1 %}
+            <form class="login_form" method="post" enctype="multipart/form-data">
+                <h1>Добавить картинку</h1>
+                <div class="form-group">
+                    <label for="photo">Выберите файл</label>
+                    <input type="file" class="form-control-file" id="photo" name="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        {% endif %}
     {% endif %}
 {% endblock %}

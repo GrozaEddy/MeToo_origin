@@ -2,6 +2,45 @@
 
 {% block content %}
     <div align="center">
-        <h1>Здесь отображаются ваши заказы:</h1>
+        <h1>Здесь отображается Ващ заказ, но вы можете посмотреть свою <a href="/history/{{user_id}}">историю заказов</a>:</h1>
     </div>
+    {% for names in spisok_poz %}
+            <table>
+                <tr><th colspan="6" align="center">{{names}}</th></tr>
+                    {% for item in pizza_menu[names] %}
+                    <tr>
+                        <th>
+                            <div style="padding: 30px;">
+                            <img src="{{item['picture_place']}}" alt="{{item['name']}}" height="330" width="400">
+                            </div>
+                        </th>
+                        <th>
+                            <div style="padding: 0px 0px 0px 30px;"><h1>{{item['name']}}</h1></div>
+                            <div style="width: 60%; padding: 0px 0px 0px 30px;"> {{item['sostav']}} <br>
+                                <big style="colorL red;">{{item['price']}}</big></div>
+                            <div class="button-add-in-order" id="{{item['id']}}">
+                                <nobr><a href="/plus/{{item['id']}}" class="btn btn-warning">+</a>
+                                <h2>{{item['count']}}</h2></nobr>
+                                <a href="/minus/{{item['id']}}" class="btn btn-warning">-</a>
+                                <a href="delete/{{item['id']}}" class="btn btn-warning">Удалить</a>
+                            </div>
+                        </th>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+        {% if count != 0%}
+            <div class="button-add-in-order">
+                <a href="/add-order" class="btn btn-warning">Заказать</a>
+                <h1></h1>
+                <h1></h1>
+                <h1></h1>
+                <h1></h1>
+                <h1></h1>
+                <h1></h1>
+                <h1></h1>
+            </div>
+        {% else %}
+            <h1 style="color:Red">Вы ничего не заказали!</h1>
+        {% endif %}
 {% endblock %}

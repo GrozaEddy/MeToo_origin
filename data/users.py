@@ -25,4 +25,4 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         return check_password_hash(self.hashed_password, password)
 
     def __repr__(self):
-        return f'{self.id}, {self.name}, {self.about}, {self.email}, {self.order}'
+        return f'{self.id}, {self.name}, {self.email}, {self.order}'
