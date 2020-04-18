@@ -15,6 +15,9 @@ class History(SqlAlchemyBase, SerializerMixin):
     address = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     about_order = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     all_price = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    number_phone = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
     def __repr__(self):
-        return f'{self.id}, {self.user_id}, {self.address}, {self.about_order}, {self.all_price}'
+        return f'{self.id}, {self.user_id}, {self.address}, {self.about_order}, {self.all_price}' \
+            f'{self.created_date}, {self.number_phone}'

@@ -54,7 +54,7 @@ class AddInOrder(FlaskForm):
 class AddInHistory(FlaskForm):
     city = StringField('В какой город доставить?', validators=[DataRequired()])
     full_name_street = StringField('Полный адрес(не забудьте указать номер дома и квартиры)',
-                       validators=[DataRequired()])
+                                   validators=[DataRequired()])
 
 
 class Korzina(FlaskForm):
@@ -204,20 +204,8 @@ def session_test():
     return f"Вы зашли на страницу {session['visits_count']} раз!"
 
 
-@app.route("/")
-@app.route("/index")
-def index():
-    sessions = db_session.create_session()
-    new = sessions.query(news.News).filter(news.News.is_private != True)
-    params = {}
-    params['title'] = 'MeToo'
-    params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
-    params['admin'] = 'no'
-    return render_template("karysel.html", **params)
-
-
-@app.route("/admin", methods=['GET', 'POST'])
-@app.route("/index-admin", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/index", methods=['GET', 'POST'])
 def index_for_admin():
     sessions = db_session.create_session()
     params = {}
@@ -237,14 +225,17 @@ def index_for_admin():
 
 @app.route('/menubuy/<string:idd>')
 def menu_buy(idd):
-    sessions = db_session.create_session()
-    user = sessions.query(users.User).get(current_user.id)
-    if user.order is None:
-        user.order = ''
-    if idd not in str(user.order).split():
-        user.order = str(user.order) + ' ' + idd
-    sessions.commit()
-    return redirect('/menu')
+    try:
+        sessions = db_session.create_session()
+        user = sessions.query(users.User).get(current_user.id)
+        if user.order is None:
+            user.order = ''
+        if idd not in str(user.order).split():
+            user.order = str(user.order) + ' ' + idd
+        sessions.commit()
+        return redirect('/menu')
+    except Exception:
+        return redirect('/login')
 
 
 @app.route('/menu', methods=['POST', 'GET'])
@@ -287,7 +278,7 @@ def plus_in_order(idd):
 def minus_in_order(idd):
     sessions = db_session.create_session()
     user = sessions.query(users.User).get(current_user.id)
-    arr = user.order.split()
+    arr = str(user.order).split()
     if idd.strip() in arr and arr.count(idd) > 1:
         arr.remove(idd.strip())
     arr.sort()
@@ -321,15 +312,15 @@ def add_order():
     arr = str(user.order).split()
     for x in sorted(arr):
         for y in sessions.query(menu.Menu).filter(menu.Menu.id == x):
-            price += (arr.count(x) * int(y.price))
+            price += int(y.price)
     if form.validate_on_submit():
         user_answer = request.form['opl']
-        print(user_answer)
         add_in_history = history.History(
             user_id=user.id,
-            address='address',
+            address=form.place.data,
             about_order=user.order,
-            all_price=price
+            all_price=price,
+            number_phone=form.number.data
         )
         user.order = ''
         sessions.add(add_in_history)
