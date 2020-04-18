@@ -69,6 +69,12 @@ class MenuForm(FlaskForm):
     submit = SubmitField('Добавить')
 
 
+class KorzinaForm(FlaskForm):
+    place = StringField('Адрес для доставки:', validators=[DataRequired()])
+    number = StringField('Ваш номер телефона:', validators=[DataRequired()])
+    submit = SubmitField('Оплатить')
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -306,25 +312,33 @@ def delete(idd):
     return redirect('/menu')
 
 
-@app.route('/add-order')
+@app.route('/add-order', methods=['POST', 'GET'])
 def add_order():
+    form = KorzinaForm()
     sessions = db_session.create_session()
     user = sessions.query(users.User).get(current_user.id)
     price = 0
-    arr = user.order.split()
+    arr = str(user.order).split()
     for x in sorted(arr):
         for y in sessions.query(menu.Menu).filter(menu.Menu.id == x):
             price += (arr.count(x) * int(y.price))
-    add_in_history = history.History(
-        user_id=user.id,
-        address='address',
-        about_order=user.order,
-        all_price=price
-    )
-    user.order = ''
-    sessions.add(add_in_history)
-    sessions.commit()
-    return redirect('/')
+    if form.validate_on_submit():
+        user_answer = request.form['opl']
+        print(user_answer)
+        add_in_history = history.History(
+            user_id=user.id,
+            address='address',
+            about_order=user.order,
+            all_price=price
+        )
+        user.order = ''
+        sessions.add(add_in_history)
+        sessions.commit()
+        if user_answer == 'qiwi':
+            return redirect('https://qiwi.com/')
+        else:
+            return redirect('https://www.paypal.com/')
+    return render_template('oplata.html', form=form, price=price)
 
 
 @app.route('/yours-order', methods=['POST', 'GET'])

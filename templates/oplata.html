@@ -1,0 +1,33 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h1>Оплата заказа</h1>
+<h2>Цена ваших товаров <font size="7" color="red" face="Arial">{{ price }} рублей</font></h2>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <p>
+        {{ form.place.label }}<br>
+        {{ form.place(class="form-control", type="place") }}<br>
+        {% for error in form.place.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.number.label }}<br>
+        {{ form.number(class="form-control", type="number") }}<br>
+        {% for error in form.number.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+        <p><b>Выбирите удобный способ оплаты:</b></p>
+        <p><input name="opl" type="radio" value="qiwi" checked="checked"> Qiwi </p>
+        <p><input name="opl" type="radio" value="paypal"> PayPal </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}
