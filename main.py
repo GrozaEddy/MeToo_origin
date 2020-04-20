@@ -43,7 +43,6 @@ class LoginForm(FlaskForm):
 class NewsForm(FlaskForm):
     title = StringField('Заголовок', validators=[DataRequired()])
     content = TextAreaField('Содержание')
-    is_private = BooleanField('Приватность')
     submit = SubmitField('Применить')
 
 
@@ -134,35 +133,6 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/news/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_news(id):
-    form = NewsForm()
-    if request.method == 'GET':
-        sessions = db_session.create_session()
-        new = sessions.query(news.News).filter(news.News.id == id,
-                                               news.News.user == current_user).first()
-        if new:
-            form.title.data = new.title
-            form.content.data = new.content
-            form.is_private.data = new.is_private
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        sessions = db_session.create_session()
-        new = sessions.query(news.News).filter(news.News.id == id,
-                                               news.News.user == current_user).first()
-        if new:
-            new.title = form.title.data
-            new.content = form.content.data
-            new.is_private = form.is_private.data
-            sessions.commit()
-            return redirect('/')
-        else:
-            abort(404)
-    return render_template('news.html', title='Редактирование новости', form=form)
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -221,6 +191,63 @@ def index_for_admin():
             params['arr_picture'].append(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return render_template("karysel.html", **params)
+
+
+@app.route('/newfood')
+@login_required
+def edit_news():
+    if current_user.is_authenticated:
+        session = db_session.create_session()
+        new = session.query(news.News).all()
+        return render_template("new.html", news=new, kol=len(new))
+    return redirect('/login')
+
+
+@app.route('/add-new-news', methods=['POST', 'GET'])
+def add_new():
+    form = NewsForm()
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            sessions = db_session.create_session()
+            new = news.News(
+                title=form.title.data,
+                content=form.content.data,
+                user_id=1
+            )
+            sessions.add(new)
+            sessions.commit()
+            return redirect('/newfood')
+        return redirect('/login')
+    return render_template('news.html', form=form)
+
+
+@app.route('/news-change/<int:idd>', methods=['POST', 'GET'])
+@login_required
+def news_change(idd):
+    form = NewsForm()
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            session = db_session.create_session()
+            new = session.query(news.News).filter(news.News.id == idd).first()
+            new.title = form.title.data
+            new.content = form.content.data
+            session.commit()
+            return redirect('/newfood')
+        return redirect('/login')
+    return render_template('news.html', form=form)
+
+
+@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    session = db_session.create_session()
+    new = session.query(news.News).filter(news.News.id == id).first()
+    if news:
+        session.delete(new)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/newfood')
 
 
 @app.route('/menubuy/<string:idd>')
@@ -326,9 +353,9 @@ def add_order():
         sessions.add(add_in_history)
         sessions.commit()
         if user_answer == 'qiwi':
-            return redirect('https://qiwi.com/')
+            return redirect('https://qiwi.com/', '/index')
         else:
-            return redirect('https://www.paypal.com/')
+            return redirect('https://www.paypal.com/', '/index')
     return render_template('oplata.html', form=form, price=price)
 
 
@@ -400,7 +427,7 @@ def show_history(user_idd):
                         'Адрес': y.address,
                         'Стоимость заказа': y.all_price,
                         'Дата и время заказа': y.created_date}
-                    )
+                )
     return render_template('history.html', history=params)
 
 
