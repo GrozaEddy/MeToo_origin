@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <table border="2" style="border-collapse:collapse; border-color:black;">
+        {% if current_user.id == 1 %}
+                <tr style="background-color:LightGreen">
+                    <th width="150">id</th>
+                    <th width="200">Имя заказчика</th>
+                    <th width="200">Адрес</th>
+                    <th width="350">О заказе</th>
+                    <th width="200">Контактный телефон</th>
+                    <th width="200">Стоимость заказа</th>
+                    <th width="200">Дата и время заказа</th>
+                </tr>
+        {% else %}
+            <tr style="background-color:LightGreen">
+                <th width="350">Имя заказчика</th>
+                <th width="350">Контактный телефон</th>
+                <th width="350">Адрес</th>
+                <th width="350">Стоимость заказа</th>
+                <th width="350">Дата и время заказа</th>
+            </tr>
+        {% endif %}
+        {% for x in history %}
+            {% if current_user.id == 1 %}
+                <tr style="background-color:LightBlue">
+                    <th width="150">{{x['id']}}</th>
+                    <th width="200">{{x['Имя заказчика']}}</th>
+                    <th width="200">{{x['Адрес']}}</th>
+                    <th width="350">{{x['О заказе']}}</th>
+                    <th width="200">{{x['Контактный телефон']}}</th>
+                    <th width="200">{{x['Стоимость заказа']}}</th>
+                    <th width="200">{{x['Дата и время заказа']}}</th>
+                </tr>
+            {% else %}
+                <tr style="background-color:LightBlue">
+                    <th width="350">{{x['Имя заказчика']}}</th>
+                    <th width="350">{{x['Контактный телефон']}}</th>
+                    <th width="350">{{x['Адрес']}}</th>
+                    <th width="350">{{x['Стоимость заказа']}}</th>
+                    <th width="350">{{x['Дата и время заказа']}}</th>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endblock %}

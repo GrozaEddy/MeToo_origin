@@ -366,6 +366,44 @@ def yours_order():
                            user_id=user.id, count=len(menu_arr.keys()))
 
 
+@app.route("/history/<string:user_idd>", methods=['POST', 'GET'])
+def show_history(user_idd):
+    params = []
+    sessions = db_session.create_session()
+    if user_idd == '1':
+        for y in sessions.query(history.History).all():
+            arr_order = []
+            for x in str(y.about_order).split():
+                for z in sessions.query(menu.Menu).filter(menu.Menu.id == x):
+                    arr_order.append(z.title)
+            for x in sessions.query(users.User).filter(users.User.id == y.id):
+                params.append(
+                    {'id': y.user_id,
+                     'Имя заказчика': x.name,
+                     'Адрес': y.address,
+                     'О заказе': ', '.join(arr_order),
+                     'Контактный телефон': y.number_phone,
+                     'Стоимость заказа': y.all_price,
+                     'Дата и время заказа': y.created_date}
+                )
+    else:
+        for y in sessions.query(history.History).filter(history.History.user_id == user_idd):
+            arr_order = []
+            for x in str(y.about_order).split():
+                for z in sessions.query(menu.Menu).filter(menu.Menu.id == x):
+                    arr_order.append(z.title)
+            for x in sessions.query(users.User).filter(users.User.id == y.id):
+                params.append(
+                    {
+                        'Имя заказчика': x.name,
+                        'Контактный телефон': y.number_phone,
+                        'Адрес': y.address,
+                        'Стоимость заказа': y.all_price,
+                        'Дата и время заказа': y.created_date}
+                    )
+    return render_template('history.html', history=params)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
