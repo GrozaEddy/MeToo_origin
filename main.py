@@ -194,13 +194,17 @@ def index_for_admin():
 
 
 @app.route('/newfood')
-@login_required
 def edit_news():
     if current_user.is_authenticated:
         session = db_session.create_session()
         new = session.query(news.News).all()
         return render_template("new.html", news=new, kol=len(new))
     return redirect('/login')
+
+
+@app.route('/about')
+def about_us():
+    return render_template("about.html")
 
 
 @app.route('/add-new-news', methods=['POST', 'GET'])
@@ -353,9 +357,9 @@ def add_order():
         sessions.add(add_in_history)
         sessions.commit()
         if user_answer == 'qiwi':
-            return redirect('https://qiwi.com/', '/index')
+            return redirect('https://qiwi.com/')
         else:
-            return redirect('https://www.paypal.com/', '/index')
+            return redirect('https://www.paypal.com/')
     return render_template('oplata.html', form=form, price=price)
 
 
@@ -403,7 +407,7 @@ def show_history(user_idd):
             for x in str(y.about_order).split():
                 for z in sessions.query(menu.Menu).filter(menu.Menu.id == x):
                     arr_order.append(z.title)
-            for x in sessions.query(users.User).filter(users.User.id == y.id):
+            for x in sessions.query(users.User).filter(users.User.id == y.user_id):
                 params.append(
                     {'id': y.user_id,
                      'Имя заказчика': x.name,

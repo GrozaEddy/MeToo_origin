@@ -15,9 +15,7 @@
             <h3> - Вы можете редактировать меню.</h3>
             <h3> - Вам не доступна функция покупки.</h3>
         {% else %}
-            <form action="" method="post">
-                <p> {{ form.submit(type="submit", class="btn btn-primary") }} </p>
-            </form>
+            <a href="/yours-order">Корзина</a>
         {% endif %}
     </div>
 {% endblock %}
