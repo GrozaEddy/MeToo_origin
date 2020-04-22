@@ -1,7 +1,11 @@
 {% extends "main.html" %}
 
 {% block content %}
-<h1>Добавление новости</h1>
+{% if kol != 0 %}
+    <h1>Добавление новости</h1>
+{% else %}
+    <h1>Оставляем отзыв</h1>
+{% endif %}
 <form action="" method="post">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}

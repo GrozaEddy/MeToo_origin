@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
-from data import db_session, news, users, menu, history
+from data import db_session, news, users, menu, history, feedback
 from werkzeug.utils import secure_filename
 import news_api
 import json, pprint, os
@@ -193,18 +193,65 @@ def index_for_admin():
             return render_template("karysel.html", **params)
 
 
+@app.route('/feedback')
+def edit_feedback():
+    sessions = db_session.create_session()
+    feedb = sessions.query(feedback.Feedback).all()
+    return render_template('add_feedback.html', feed=feedb, kol=len(feedb))
+
+
+@app.route('/add-news-feedback', methods=['POST', 'GET'])
+def add_feedback():
+    form = NewsForm()
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            sessions = db_session.create_session()
+            feed = feedback.Feedback(
+                title=form.title.data,
+                content=form.content.data,
+                user_id=current_user.id
+            )
+            sessions.add(feed)
+            sessions.commit()
+            return redirect('/feedback')
+        return redirect('/login')
+    return render_template('news.html', form=form, kol=0)
+
+
+@app.route('/feedback-change/<int:idd>', methods=['POST', 'GET'])
+@login_required
+def feedback_change(idd):
+    form = NewsForm()
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            sessions = db_session.create_session()
+            feed = sessions.query(feedback.Feedback).filter(feedback.Feedback.id == idd).first()
+            feed.title = form.title.data
+            feed.content = form.content.data
+            sessions.commit()
+            return redirect('/feedback')
+        return redirect('/login')
+    return render_template('news.html', form=form, kol=0)
+
+
+@app.route('/feedback_delete/<int:idd>', methods=['GET', 'POST'])
+@login_required
+def feedback_delete(idd):
+    sessions = db_session.create_session()
+    feed = sessions.query(feedback.Feedback).filter(feedback.Feedback.id == idd).first()
+    if news:
+        sessions.delete(feed)
+        sessions.commit()
+    else:
+        abort(404)
+    return redirect('/feedback')
+
+
 @app.route('/newfood')
 def edit_news():
-    if current_user.is_authenticated:
-        session = db_session.create_session()
-        new = session.query(news.News).all()
-        return render_template("new.html", news=new, kol=len(new))
-    return redirect('/login')
-
-
-@app.route('/about')
-def about_us():
-    return render_template("about.html")
+    session = db_session.create_session()
+    new = session.query(news.News).all()
+    return render_template("new.html", news=new, kol=len(new))
 
 
 @app.route('/add-new-news', methods=['POST', 'GET'])
@@ -222,7 +269,7 @@ def add_new():
             sessions.commit()
             return redirect('/newfood')
         return redirect('/login')
-    return render_template('news.html', form=form)
+    return render_template('news.html', form=form, kol=1)
 
 
 @app.route('/news-change/<int:idd>', methods=['POST', 'GET'])
@@ -231,24 +278,24 @@ def news_change(idd):
     form = NewsForm()
     if form.validate_on_submit():
         if current_user.is_authenticated:
-            session = db_session.create_session()
-            new = session.query(news.News).filter(news.News.id == idd).first()
+            sessions = db_session.create_session()
+            new = sessions.query(news.News).filter(news.News.id == idd).first()
             new.title = form.title.data
             new.content = form.content.data
-            session.commit()
+            sessions.commit()
             return redirect('/newfood')
         return redirect('/login')
-    return render_template('news.html', form=form)
+    return render_template('news.html', form=form, kol=1)
 
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def news_delete(id):
-    session = db_session.create_session()
+    sessions = db_session.create_session()
     new = session.query(news.News).filter(news.News.id == id).first()
     if news:
-        session.delete(new)
-        session.commit()
+        sessions.delete(new)
+        sessions.commit()
     else:
         abort(404)
     return redirect('/newfood')
