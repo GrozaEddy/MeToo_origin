@@ -79,6 +79,11 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+@app.route('/about')
+def about_us():
+    return render_template('about.html')
+
+
 @app.route("/addfood", methods=['GET', 'POST'])
 def add_food():
     form = MenuForm()
@@ -88,16 +93,15 @@ def add_food():
             return render_template('newfood.html', title='Добавление блюда',
                                    form=form,
                                    message="Такое блюдо уже есть")
-
-        return redirect(f'/add-picture-on-food/{form.group.data}/{form.title.data}/'
-                        f'{form.content.data}/{form.price.data}')
+        return redirect(
+            f'/add-picture-on-food/{form.group.data}/{form.title.data}/{form.content.data}'
+            f'/{form.price.data}')
     return render_template('newfood.html', title='Добавление блюда', form=form)
 
 
-@app.route("/add-picture-on-food/<string:group>/<string:title>/<string:content>/<string:price>",
+@app.route("/add-picture-on-food/<group>/<title>/<content>/<price>",
            methods=['GET', 'POST'])
 def write_new_food(group, title, content, price):
-    print(group, title, content, price)
     if request.method == 'GET':
         return render_template('add_picture.html')
     if request.method == 'POST':
@@ -120,6 +124,18 @@ def write_new_food(group, title, content, price):
             except Exception:
                 print(menu.Menu.picture)
             return redirect('/menu')
+
+
+@app.route('/delete-menu/<int:idd>')
+def delete_menu(idd):
+    sessions = db_session.create_session()
+    eat = sessions.query(menu.Menu).filter(menu.Menu.id == idd).first()
+    if eat:
+        sessions.delete(eat)
+        sessions.commit()
+    else:
+        abort(404)
+    return redirect('/menu')
 
 
 @app.route('/logout')
