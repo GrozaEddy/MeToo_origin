@@ -1,1 +1,1 @@
-from . import users, news, menu
+from . import users, news, menu, feedback, history

@@ -510,6 +510,7 @@ def reqister():
 
 def main():
     db_session.global_init('db/menu.sqlite')
+    app.register_blueprint(news_api.blueprint)
     app.run()
 
 

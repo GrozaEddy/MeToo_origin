@@ -1,14 +1,14 @@
 import flask
 from flask import jsonify, request, make_response
-from data import db_session, news, users
+from data import db_session, news, users, feedback, menu, history
 
 blueprint = flask.Blueprint("news_api", __name__, template_folder='templates')
 
 
-@blueprint.route('/api/news')
+@blueprint.route('/api/feedback')
 def get_news():
     session = db_session.create_session()
-    new = session.query(news.News).all()
+    new = session.query(feedback.Feedback).all()
     return jsonify(
         {
             'news': [item.to_dict(only=('title', 'content', 'user.name')) for item in new]
@@ -16,15 +16,15 @@ def get_news():
     )
 
 
-@blueprint.route('/api/news/<int:news_id>', methods=['GET'])
-def get_one_news(news_id):
+@blueprint.route('/api/feedback/<int:feedback_id>', methods=['GET'])
+def get_one_feedback(feedback_id):
     session = db_session.create_session()
-    new = session.query(news.News).get(news_id)
+    new = session.query(feedback.Feedback).get(feedback_id)
     if not new:
         return jsonify({'error': 'Not found'})
     return jsonify(
         {
-            'news': new.to_dict(only=('title', 'content', 'user_id', 'is_private'))
+            'feedback': new.to_dict(only=('title', 'content', 'user_id'))
         }
     )
 
@@ -47,10 +47,10 @@ def create_news():
     return jsonify({'success': 'OK'})
 
 
-@blueprint.route('/api/news/<int:news_id>', methods=['DELETE'])
-def delete_news(news_id):
+@blueprint.route('/api/feedback/<int:feedback_id>', methods=['DELETE'])
+def delete_news(feedback_id):
     session = db_session.create_session()
-    new = session.query(news.News).get(news_id)
+    new = session.query(feedback.Feedback).get(feedback_id)
     if not new:
         return jsonify({'error': 'Not found'})
     session.delete(new)

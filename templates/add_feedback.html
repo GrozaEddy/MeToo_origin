@@ -1,9 +1,11 @@
 {% extends "main.html" %}
 
 {% block content %}
+    {% if current_user.is_authenticated %}
         <div>
             <a href="/add-news-feedback" class="btn btn-secondary">Добавить отзыв</a>
         </div>
+    {% endif %}
     {% if kol != 0 %}
         {% for item in feed %}
             <div class="col-md6 border rounded">
@@ -27,6 +29,6 @@
             {% endif %}
         {% endfor %}
     {% else %}
-        <h3><nobr>На данный момент у нас нет отзывов, но мы хотим что бы его оставили)</nobr></h3>
+        <h3><nobr>На данный момент у нас нет отзывов, но мы хотим чтобы вы его оставили)</nobr></h3>
     {% endif %}
 {% endblock %}
