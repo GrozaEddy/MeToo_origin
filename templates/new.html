@@ -1,15 +1,16 @@
 {% extends "main.html" %}
 
 {% block content %}
+<form class="newform">
     {% if current_user.id == 1 %}
         <div>
-            <a href="/add-new-news" class="btn btn-secondary">Добавить</a>
+            <a href="/add-new-news" class="btn btn-secondary" style="align:center">Добавить</a>
         </div>
     {% endif %}
     {% if kol != 0 %}
         {% for item in news %}
             {% if current_user.id != 1 %}
-                <div class="col-md6 border rounded">
+                <div class="col-md6 border rounded" style="border-color:black;">
                     <h2 style="color:Red;word-wrap: break-word;">{{item.title}}</h2>
                     <div style="word-wrap: break-word;">
                         {{item.content}}
@@ -19,7 +20,7 @@
                     </div>
                 </div>
             {% else %}
-                <div class="col-md6 border rounded">
+                <div class="col-md6 border rounded" style="border-color:black;">
                     <h2 style="color:Red;word-wrap: break-word;">{{item.title}}</h2>
                     <div style="word-wrap: break-word;">
                         {{item.content}}
@@ -37,4 +38,5 @@
     {% else %}
         <h1><nobr>Пока что новинок нет, но вы можете посмотреть наше <a href="/menu">меню</a></nobr></h1>
     {% endif %}
+</form>
 {% endblock %}

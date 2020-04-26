@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 
 {% block content %}
+<form class="feedback">
     {% if current_user.is_authenticated %}
         <div>
             <a href="/add-news-feedback" class="btn btn-secondary">Добавить отзыв</a>
@@ -11,7 +12,7 @@
             <div class="col-md6 border rounded">
                 <h2 style="color:Red;word-wrap: break-word;">{{item.title}}</h2>
                 <div style="word-wrap: break-word;">
-                    {{item.content}}
+                    <p style="color: FFA500;">{{item.content}}</p>
                 </div>
                 <div>
                     Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
@@ -31,4 +32,5 @@
     {% else %}
         <h3><nobr>На данный момент у нас нет отзывов, но мы хотим чтобы вы его оставили)</nobr></h3>
     {% endif %}
+</form>
 {% endblock %}
