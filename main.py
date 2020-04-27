@@ -7,7 +7,6 @@ from data import db_session, news, users, menu, history, feedback
 from werkzeug.utils import secure_filename
 import news_api
 import json, pprint, os
-import datetime as dt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -193,7 +192,6 @@ def session_test():
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/index", methods=['GET', 'POST'])
 def index_for_admin():
-    sessions = db_session.create_session()
     params = {}
     params['title'] = 'MeToo'
     params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']

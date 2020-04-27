@@ -21,15 +21,15 @@
                                 {% if current_user.is_authenticated %}
                                     {% if current_user.id == 1 %}
                                         <div>
-                                          <a href="/delete-menu/{{ item.id }}" class="btn btn-danger">Удадить</a>
+                                          <a href="/delete-menu/{{ item.id }}" class="btn btn-danger">Удалить</a>
                                         </div>
                                     {% else %}
-                                        <div class="button-add-in-order" id="{{item['id']}}">
+                                        <div class="button-add-in-order">
                                            <a href="/menubuy/{{ item.id }}" class="btn btn-warning">Добавить</a>
                                         </div>
                                     {% endif %}
                                 {% else %}
-                                    <div class="button-add-in-order" id="{{item['id']}}">
+                                    <div class="button-add-in-order">
                                         <a href="/menubuy/{{ item.id }}" class="btn btn-warning">Добавить</a>
                                     </div>
                                 {% endif %}
