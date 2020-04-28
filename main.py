@@ -302,11 +302,11 @@ def news_change(idd):
     return render_template('news.html', form=form, kol=1)
 
 
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/news_delete/<int:idd>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def news_delete(idd):
     sessions = db_session.create_session()
-    new = session.query(news.News).filter(news.News.id == id).first()
+    new = sessions.query(news.News).filter(news.News.id == idd).first()
     if news:
         sessions.delete(new)
         sessions.commit()
