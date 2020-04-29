@@ -182,6 +182,28 @@ def cookie_test():
     return res
 
 
+def add_picture_in_karusel(filename):
+    file = open('karusel.txt', 'r', encoding='utf-8')
+    arr = []
+    for x in file.readlines():
+        arr.append(x.strip('\n'))
+    arr.append(filename)
+    file.close()
+    file1 = open('karusel.txt', 'w')
+    for x in arr:
+        file1.write(x + '\n')
+    file1.close()
+
+
+def return_txt_karusel():
+    file = open('karusel.txt', 'r', encoding='utf-8')
+    arr = []
+    for x in file.readlines():
+        arr.append(x.strip('\n'))
+    file.close()
+    return arr
+
+
 @app.route('/session_test')
 def session_test():
     session.permanent = True
@@ -194,7 +216,7 @@ def session_test():
 def index_for_admin():
     params = {}
     params['title'] = 'MeToo'
-    params['arr_picture'] = ['akthii.jpg', 'new.jpg', 'first_purchase.png']
+    params['arr_picture'] = return_txt_karusel()
     params['admin'] = 'yes'
     if request.method == 'GET':
         return render_template('karysel.html', **params)
@@ -202,8 +224,9 @@ def index_for_admin():
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            params['arr_picture'].append(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            add_picture_in_karusel(filename)
+            params['arr_picture'] = return_txt_karusel()
             return render_template("karysel.html", **params)
 
 
