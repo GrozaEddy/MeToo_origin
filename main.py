@@ -508,7 +508,7 @@ def show_history(user_idd):
             for x in str(y.about_order).split():
                 for z in sessions.query(menu.Menu).filter(menu.Menu.id == x):
                     arr_order.append(z.title)
-            for x in sessions.query(users.User).filter(users.User.id == y.id):
+            for x in sessions.query(users.User).filter(users.User.id == y.user_id):
                 params.append(
                     {
                         'Имя заказчика': x.name,
