@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import news_api
 import json, pprint, os
 
+db_session.global_init('db/menu.sqlite')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -545,11 +546,6 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-def main():
-    db_session.global_init('db/menu.sqlite')
+if __name__ == '__main__':
     app.register_blueprint(news_api.blueprint)
     app.run()
-
-
-if __name__ == '__main__':
-    main()
